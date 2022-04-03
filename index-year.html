@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+</style>
+	<title>Choropleth Tutorial - Leaflet</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+    integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+    crossorigin=""></script>
+
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@2.1.4/dist/esri-leaflet.js"
+    integrity="sha512-m+BZ3OSlzGdYLqUBZt3u6eA0sH+Txdmq7cqA1u8/B2aTXviGMMLOfrKyiIW7181jbzZAY0u+3jWoiL61iLcTKQ=="
+    crossorigin=""></script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.leaflet-container {
+			height: 500px;
+			width: 900px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	<style>#map { width: 800px; height: 500px; }
+.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+.legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }</style>
+</head>
+<body>
+<div class="topnav">
+  <a class="active" href="homepage.html">Home</a>
+  <a href="index-prix.html">Prix Fruits et Vin</a>
+  <a href="index-phenomenes.html">Phénomènes climatiques de longue durée</a>
+  <a href="index-eau.html">Inondations des cours d'eau</a>
+  <a href="index-full.html">Vue Globale des evenements</a>
+  <a href="index-year.html">Année 1424</a>
+</div>
+<div style="padding-left:16px">
+  <h2>Maps navigation</h2>
+  <p>Maps filtering of middle ages events</p>
+</div>
+<div id='map'></div>
+
+<script type="text/javascript" src="coord-year.js"></script>
+
+<script type="text/javascript">
+
+	var map = L.map('map').setView([47,9], 4.5);
+	  L.esri.basemapLayer("Topographic").addTo(map);
+
+	
+
+	L.geoJson(climaticEvents, {
+        onEachFeature: function(feature, layer) {
+            if (feature.properties && feature.properties.name) {
+                layer.bindPopup(feature.properties.name, {closeButton: false, offset: L.point(0, -20)});
+                layer.on('mouseover', function() { layer.openPopup(); });
+                layer.on('mouseout', function() { layer.closePopup(); });
+            }
+        },
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, {
+			  radius: feature.properties.occ,
+			  color: 'orange'}); // The basic style
+	}
+    }).addTo(map);;
+	
+	
+		L.geoJson(recoltesData, {
+        onEachFeature: function(feature, layer) {
+            if (feature.properties && feature.properties.name) {
+                layer.bindPopup(feature.properties.name, {closeButton: false, offset: L.point(0, -20)});
+                layer.on('mouseover', function() { layer.openPopup(); });
+                layer.on('mouseout', function() { layer.closePopup(); });
+            }
+        },
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, {
+			  radius: feature.properties.occ,
+			  color: 'red'}); // The basic style
+	}
+    }).addTo(map);;
+
+	L.geoJson(herbagesData, {
+			onEachFeature: function(feature, layer) {
+				if (feature.properties && feature.properties.name) {
+					layer.bindPopup(feature.properties.name, {closeButton: false, offset: L.point(0, -20)});
+					layer.on('mouseover', function() { layer.openPopup(); });
+					layer.on('mouseout', function() { layer.closePopup(); });
+				}
+			},
+			pointToLayer: function (feature, latlng) {
+				return L.circleMarker(latlng, {
+				  radius: feature.properties.occ,
+				  color: 'black'}); // The basic style
+		}
+		}).addTo(map);;
+	
+	
+	L.geoJson(inondationsEau, {
+			onEachFeature: function(feature, layer) {
+				if (feature.properties && feature.properties.name) {
+					layer.bindPopup(feature.properties.name, {closeButton: false, offset: L.point(0, -20)});
+					layer.on('mouseover', function() { layer.openPopup(); });
+					layer.on('mouseout', function() { layer.closePopup(); });
+				}
+			},
+			pointToLayer: function (feature, latlng) {
+				return L.circleMarker(latlng, {
+				  radius: feature.properties.occ,
+				  color: 'violet'}); // The basic style
+		}
+		}).addTo(map);;
+		
+		L.geoJson(phenologiques, {
+        onEachFeature: function(feature, layer) {
+            if (feature.properties && feature.properties.name) {
+                layer.bindPopup(feature.properties.name, {closeButton: false, offset: L.point(0, -20)});
+                layer.on('mouseover', function() { layer.openPopup(); });
+                layer.on('mouseout', function() { layer.closePopup(); });
+            }
+        },
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, {
+			  radius: feature.properties.occ,
+			  color: 'blue'}); // The basic style
+	}
+    }).addTo(map);;
+
+
+L.geoJson(recoltesCerealesData, {
+        onEachFeature: function(feature, layer) {
+            if (feature.properties && feature.properties.name) {
+                layer.bindPopup(feature.properties.name, {closeButton: false, offset: L.point(0, -20)});
+                layer.on('mouseover', function() { layer.openPopup(); });
+                layer.on('mouseout', function() { layer.closePopup(); });
+            }
+        },
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, {
+			  radius: feature.properties.occ,
+			  color: 'GreenYellow'}); // The basic style
+	}
+    }).addTo(map);;
+
+
+	// control that shows state info on hover
+	var info = L.control();
+
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info');
+		this.update();
+		return this._div;
+	};
+
+	info.update = function (props) {
+		this._div.innerHTML = '<h4>Year 1424</h4>';
+	};
+
+	info.addTo(map);
+	
+	
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
